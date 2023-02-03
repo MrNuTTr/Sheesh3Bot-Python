@@ -10,8 +10,8 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 PUBLIC_KEY = os.environ["DISCORD_PUBLIC_KEY"]
 
-@app.function_name(name="HttpTrigger1")
-@app.route(route="hello")
+@app.function_name(name="InteractionsHandler")
+@app.route(route="interactions")
 def test_function(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Python HTTP trigger function processed a request.")
     
