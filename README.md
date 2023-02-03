@@ -1,8 +1,6 @@
 # Sheesh3Bot
 A Discord chatbot built using GPT-3 inside of Microsoft Azure Functions
 
-# Getting Started with Azure Functions in Python
-  
 
 ## Python Programming Model V2 (Preview)
 
