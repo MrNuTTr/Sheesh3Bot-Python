@@ -8,7 +8,7 @@ from nacl.exceptions import BadSignatureError
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
-public_key = os.environ["DISCORD_PUBLIC_KEY"]
+PUBLIC_KEY = os.environ["DISCORD_PUBLIC_KEY"]
 
 @app.function_name(name="HttpTrigger1")
 @app.route(route="hello")
@@ -24,7 +24,7 @@ def test_function(req: func.HttpRequest) -> func.HttpResponse:
                 }),
             status_code = 200
         )
-    except BadSignatureError:
+    except:
         return func.HttpResponse(
             "Bad signature",
             status_code = 401
@@ -33,9 +33,8 @@ def test_function(req: func.HttpRequest) -> func.HttpResponse:
 def verify_req(req: func.HttpRequest):
     signature = req.headers['x-signature-ed25519']
     timestamp = req.headers['x-signature-timestamp']
+    body = req.get_body().decode("utf-8")
     
-    verify_key = VerifyKey(bytes.fromhex(public_key))
+    verify_key = VerifyKey(bytes.fromhex(PUBLIC_KEY))
     
-    message = timestamp + json.dump(req.get_body(), separators=(',', ':'))
-    
-    verify_key.verify(message.encode(), signature=bytes.fromhex(signature))
+    verify_key.verify(f"{timestamp}{body}".encode(), signature=bytes.fromhex(signature))
