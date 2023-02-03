@@ -60,14 +60,14 @@ def test_function(req: func.HttpRequest) -> func.HttpResponse:
         )
 
 def command_handler(body) -> func.HttpResponse:
-    return func.HttpResponse(json.dumps({"type":4}))
-        #json.dumps({
-        #    "type": 2,
-        #    "data": {
-        #        "content": "Hello, world!"
-        #    }
-        #    })
-    #)
+    return func.HttpResponse(
+        json.dumps({
+            "type": 2,
+            "data": {
+                "content": "Hello, world!"
+            }
+        })
+    )
 
 def verify_request(req: func.HttpRequest):
     try:
