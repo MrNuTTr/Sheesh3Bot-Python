@@ -2,6 +2,7 @@ import json
 import os
 import azure.functions as func
 import logging
+import requests
 
 from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
@@ -20,19 +21,18 @@ def test_function(req: func.HttpRequest) -> func.HttpResponse:
         
         body = req.get_json()
         
+        logging.warning(body)
+        
         if body["type"] == 1:
             logging.warning("Got ping request")
             return func.HttpResponse(
                 json.dumps({
                     "type": 1
-                    }),
-                status_code = 200
+                    })
             )
         elif body["type"] == 2:
-            logging.warning("Got a user command request")
-            bro = command_handler(body)
-            logging.warning(bro.get_body())
-            return bro
+            logging.warning("Incoming Application Command")
+            return command_handler(body)
         
         #Unhandled message type
         logging.error("Unhandled message type")
@@ -60,14 +60,14 @@ def test_function(req: func.HttpRequest) -> func.HttpResponse:
         )
 
 def command_handler(body) -> func.HttpResponse:
-    return func.HttpResponse(
-        json.dumps({
-            "type": 4,
-            "data": {
-                "content": "Hello, world!"
-            }
-            })
-    )
+    return func.HttpResponse(json.dumps({"type":4}))
+        #json.dumps({
+        #    "type": 2,
+        #    "data": {
+        #        "content": "Hello, world!"
+        #    }
+        #    })
+    #)
 
 def verify_request(req: func.HttpRequest):
     try:
