@@ -1,14 +1,16 @@
 import json
-import os
-import azure.functions as func
 import logging
+import openai
+from os import environ as env
+import azure.functions as func
 
 from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
 
 app = func.FunctionApp()
 
-PUBLIC_KEY = os.environ["DISCORD_PUBLIC_KEY"]
+DISCORD_KEY = env["DISCORD_PUBLIC_KEY"]
+OPENAI_KEY = env["OPENAI_API_KEY"]
 
 @app.function_name(name="InteractionsHandler")
 @app.route(route="interactions", auth_level=func.AuthLevel.ANONYMOUS)
@@ -31,7 +33,6 @@ def handle_request(req: func.HttpRequest) -> func.HttpResponse:
         #Unhandled message type
         logging.error("Unhandled message type")
         return json_response({"type": 1})
-
         
     except BadSignatureError:
         logging.error("Failed to verify signature")
@@ -49,17 +50,44 @@ def handle_request(req: func.HttpRequest) -> func.HttpResponse:
         )
 
 def command_handler(body) -> func.HttpResponse:
-    return json_response({
+    if body["data"]["name"] == "support":
+        openai.api_key = OPENAI_KEY
+        logging.info(body)
+        prompt = body["data"]["options"][0]["value"]
+
+        logging.info("Prompt: " + prompt)
+
+        ai_request = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=prompt,
+            temperature=0.99,
+            frequency_penalty=1,
+            max_tokens=64,
+            n=1
+        )
+
+        response = ai_request.choices[0].text.strip()
+
+        logging.info("Reponse:" + response)
+
+        return json_response({
             "type": 4,
             "data": {
-                "content": "Hello, world!"
+                "content": response
             }
-        }
-    )
+        })
 
-def json_response(json, status_code = 200) -> func.HttpResponse:
+    return json_response({
+        "type":2,
+        "data":{
+            "content": "Unhandled command."
+        },
+        "flags": 1 << 6
+    })
+
+def json_response(data, status_code = 200) -> func.HttpResponse:
     return func.HttpResponse(
-        json.dumps(json),
+        json.dumps(data),
         status_code=status_code,
         mimetype="application/json"
     )
@@ -72,7 +100,7 @@ def verify_request(req: func.HttpRequest):
         
         message = timestamp + json.dumps(body, separators=(",", ":"))
         
-        vk = VerifyKey(bytes.fromhex(PUBLIC_KEY))
+        vk = VerifyKey(bytes.fromhex(DISCORD_KEY))
         vk.verify(message.encode(), bytes.fromhex(signature))
 
     except Exception as ex:
