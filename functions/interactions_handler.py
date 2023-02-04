@@ -22,10 +22,12 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
             logging.info("Sending an ACK and defering")
             logging.info(body)
             # Sending to the internal "sendmessage" function.
-            # The timeout is 0.1 seconds because we don't care about its return.
+            # The "connect" timeout is 2 seconds, to make sure
+            # our message is sent. The read timeout is 0.1 
+            # because we don't care about its return.
             try:
                 requests.post(f"{AZURE_URL}/sendmessage",
-                    None, body, timeout=1
+                    None, body, timeout=(2, 0.1)
                 )
             except:
                 pass
