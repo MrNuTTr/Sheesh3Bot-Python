@@ -25,6 +25,6 @@ def http_handler(req: func.HttpRequest) -> func.HttpResponse:
 
 # This is the function the primary handler defers to when sending a message
 @app.function_name(name="RespondToMessage")
-@app.route(route="sendmessage", auth_level=func.AuthLevel.FUNCTION)
+@app.route(route="sendmessage", auth_level=func.AuthLevel.ANONYMOUS)
 def http_handler1(req: func.HttpRequest) -> func.HttpResponse:
     return message_sender.handler(req)

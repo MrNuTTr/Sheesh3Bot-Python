@@ -36,9 +36,9 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
     # Send the message directly to discord, now that it's generated
     # See documentation on follow-up messages
     # https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response
-    id = body["id"]
-    token = body["token"]
-    discord_url = f"https://discord.com/api/{id}/{token}/callback"
+    interaction_id = body["id"]
+    interaction_token = body["token"]
+    discord_url = f"https://discord.com/api/interactions/{interaction_id}/{interaction_token}/callback"
 
     response = requests.post(
         discord_url, None, {

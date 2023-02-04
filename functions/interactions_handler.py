@@ -10,7 +10,7 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Received Interaction from Discord")
     
     body = req.get_json()
-            
+    
     if body["type"] == 1:
         logging.info("Got ping request")
         return json_response({"type": 1})
@@ -21,6 +21,8 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
         if body["data"]["name"] == "support":
             logging.info("Sending an ACK and defering")
 
+            # Sending to the internal "sendmessage" function.
+            # Function key is required for our request to be processed.
             requests.post(f"{AZURE_URL}/sendmessage",
                 None, body
             )
