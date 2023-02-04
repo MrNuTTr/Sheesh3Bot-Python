@@ -20,12 +20,15 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
         
         if body["data"]["name"] == "support":
             logging.info("Sending an ACK and defering")
-
+            logging.info(body)
             # Sending to the internal "sendmessage" function.
-            # Function key is required for our request to be processed.
-            requests.post(f"{AZURE_URL}/sendmessage",
-                None, body
-            )
+            # The timeout is 0.1 seconds because we don't care about its return.
+            try:
+                requests.post(f"{AZURE_URL}/sendmessage",
+                    None, body, timeout=1
+                )
+            except:
+                pass
 
             return json_response({"type": 5})
 

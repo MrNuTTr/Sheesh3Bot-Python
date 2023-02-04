@@ -11,6 +11,14 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
     
     body = req.get_json()
 
+    # Construct the initial prompt for the AI to use in its response
+    prompt_start = """
+    You are a grumpy chat support bot named Greg.
+    Fill the response appropriately.
+    Human: """
+    prompt_end = "\nGreg: "
+
+
     # Get the OpenAI Information and request text
     openai.api_key = OPENAI_KEY
     logging.info(body)
@@ -21,7 +29,7 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
     # This should give varied and pretty random results. n=1 to save time
     ai_request = openai.Completion.create(
         engine="text-davinci-003",
-        prompt=prompt,
+        prompt=prompt_start + prompt + prompt_end,
         temperature=0.99,
         frequency_penalty=1,
         max_tokens=64,
@@ -35,22 +43,19 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
 
     # Send the message directly to discord, now that it's generated
     # See documentation on follow-up messages
-    # https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response
-    interaction_id = body["id"]
+    # https://discord.com/developers/docs/interactions/receiving-and-responding#edit-original-interaction-response
+    application_id = body["application_id"]
     interaction_token = body["token"]
-    discord_url = f"https://discord.com/api/interactions/{interaction_id}/{interaction_token}/callback"
+    discord_url = f"https://discord.com/api/webhooks/{application_id}/{interaction_token}/messages/@original"
 
-    response = requests.post(
-        discord_url, None, {
-            "type": 4,
-            "data": {
-                "content": text
-            }
+    response = requests.patch(
+        discord_url, {
+            "content": str(text)
         }
     )
 
     # Check if the response was sent correctly
-    if response.status_code != 204:
+    if response.status_code != 200:
         logging.error("Failed to send message")
         logging.error(response.content)
         return func.HttpResponse(status_code=response.status_code)
