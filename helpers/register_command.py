@@ -20,9 +20,9 @@ url = f"https://discord.com/api/v8/applications/{APP_ID}/guilds/{GUILD_ID}/comma
 json = {
   "name": "support",
   "type": 1,
-  "description": "Ask for help",
+  "description": "Ask for the very best of technical support",
   "options": [{
-    "name": "input",
+    "name": "question",
     "description": "Ask your question",
     "type": 3,
     "required": True
