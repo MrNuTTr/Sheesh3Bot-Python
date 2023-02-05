@@ -44,12 +44,12 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
     # Send the message directly to discord, now that it's generated
     # See documentation on follow-up messages
     # https://discord.com/developers/docs/interactions/receiving-and-responding#edit-original-interaction-response
-    application_id = body["application_id"]
-    interaction_token = body["token"]
-    discord_url = f"https://discord.com/api/webhooks/{application_id}/{interaction_token}/messages/@original"
+    app = body["application_id"]
+    token = body["token"]
+    url = f"https://discord.com/api/webhooks/{app}/{token}/messages/@original"
 
     response = requests.patch(
-        discord_url, {
+        url, {
             "content": str(text)
         }
     )

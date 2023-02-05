@@ -8,7 +8,7 @@ from helper.functions import json_response
 
 app = func.FunctionApp()
 
-# This function is the primary handler for all incoming Interactions from Discord
+# This function is the primary handler for all Interactions from Discord
 @app.function_name(name="InteractionsHandler")
 @app.route(route="interactions", auth_level=func.AuthLevel.ANONYMOUS)
 def http_handler(req: func.HttpRequest) -> func.HttpResponse:

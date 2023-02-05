@@ -21,16 +21,18 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
         if body["data"]["name"] == "support":
             logging.info("Sending an ACK and defering")
             logging.info(body)
+
+            # Send a message to discord letting them know we're 
+            # defering the message
+            act_id = body["id"]
+            token = body["token"]
+            url = f"https://discord.com/api/interactions/{act_id}/{token}/callback"
+            requests.post(url, None, {"type": 5})
+
             # Sending to the internal "sendmessage" function.
-            # The "connect" timeout is 2 seconds, to make sure
-            # our message is sent. The read timeout is 0.1 
-            # because we don't care about its return.
-            try:
-                requests.post(f"{AZURE_URL}/sendmessage",
-                    None, body, timeout=(2, 0.1)
-                )
-            except:
-                pass
+            requests.post(f"{AZURE_URL}/sendmessage",
+                None, body
+            )
 
             return json_response({"type": 5})
 
