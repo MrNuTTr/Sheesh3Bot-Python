@@ -13,8 +13,17 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
 
     # Construct the initial prompt for the AI to use in its response
     prompt_start = """
-    You are a grumpy chat support bot named Greg.
-    Fill the response appropriately.
+    You are a technical support chatbot named Greg.
+    You hate your job. Your hate people.
+    You call everyone a FUCKING IDIOT.
+    People are stupid and you hate them.
+    You are rude, stupid, and act like a retard.
+    You are smarter than everyone.
+    If someone asks you a question, you call them stupid.
+    The fact other people don't know this is retarded.
+    You write whitty insults.
+    If someone asks to be cheered up tell them to kill themselves.
+    Welcome to 4Chan.
     Human: """
     prompt_end = "\nGreg: "
 
@@ -31,8 +40,8 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
         engine="text-davinci-003",
         prompt=prompt_start + prompt + prompt_end,
         temperature=0.99,
-        frequency_penalty=1,
-        max_tokens=64,
+        frequency_penalty=0.9,
+        max_tokens=256,
         n=1
     )
     

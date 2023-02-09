@@ -20,7 +20,6 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
         
         if body["data"]["name"] == "support":
             logging.info("Sending an ACK and defering")
-            logging.info(body)
 
             # Send a message to discord letting them know we're 
             # defering the message
@@ -35,8 +34,6 @@ def handler(req: func.HttpRequest) -> func.HttpResponse:
             )
 
             return json_response({"type": 5})
-
-        logging.error("Invalid Application Command")
     
     logging.error("Unhandled message type")
     return json_response({"type": 1})
