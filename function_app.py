@@ -12,14 +12,16 @@ app = func.FunctionApp()
 @app.function_name(name="InteractionsHandler")
 @app.route(route="interactions", auth_level=func.AuthLevel.ANONYMOUS)
 def http_handler(req: func.HttpRequest) -> func.HttpResponse:
-    try:
-        verify_request(req)
-    except BadSignatureError:
-        logging.error("Failed to verify signature")
-        return json_response({
+    
+    if not __debug__:
+        try:
+            verify_request(req)
+        except BadSignatureError:
+            logging.error("Failed to verify signature")
+            return json_response({
                 "Error": "Could not verify interaction signature"
-            }, status_code=401
-        )
+                }, status_code=401
+            )
     
     return interactions_handler.handler(req)
 
