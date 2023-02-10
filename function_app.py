@@ -1,5 +1,6 @@
 import logging
 import azure.functions as func
+from os import environ as env
 from functions import message_sender
 from functions import interactions_handler
 from nacl.exceptions import BadSignatureError
@@ -13,7 +14,7 @@ app = func.FunctionApp()
 @app.route(route="interactions", auth_level=func.AuthLevel.ANONYMOUS)
 def http_handler(req: func.HttpRequest) -> func.HttpResponse:
     
-    if not __debug__:
+    if env["DEBUG"] == 0:
         try:
             verify_request(req)
         except BadSignatureError:
