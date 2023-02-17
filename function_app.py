@@ -16,7 +16,9 @@ AZURE_URL = env["AZURE_URL_BASE"]
 @app.route(route="interactions", auth_level=func.AuthLevel.ANONYMOUS)
 def http_handler(req: func.HttpRequest) -> func.HttpResponse:
     
-    if env["DEBUG"] == 0:
+    if env["DEBUG"] == "1":
+        logging.info("In debug mode")
+    else:
         try:
             verify_request(req)
         except BadSignatureError:
