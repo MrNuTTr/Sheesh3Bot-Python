@@ -38,7 +38,7 @@ def http_handler1(req: func.HttpRequest) -> func.HttpResponse:
 
 # This runs once every 20 minutes to prevent the bot from Cold Starting
 @app.function_name(name="Wakeup")
-@app.schedule(schedule="0 */20 * * * *", 
+@app.schedule(schedule="0 */19 * * * *", 
             arg_name="mytimer", 
             run_on_startup=False,
             use_monitor=False)
